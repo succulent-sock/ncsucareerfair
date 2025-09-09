@@ -1,5 +1,6 @@
 import subprocess
 import sys
+import os
 
 def install(package):
     subprocess.check_call([sys.executable, "-m", "pip", "install", package])
@@ -18,7 +19,7 @@ except:
 
 def pickFile():
     Tk().withdraw()
-    return tkinter.filedialog.askopenfilename()
+    return tkinter.filedialog.askopenfilename(title="Select Career Fair Plus Data")
 
 def createHeader(ws, col):
     header = ('Booth', 'Company Name', 'Day', 'Friday', 'Monday', 'Late', '@Booth', 'Shipped')
@@ -75,7 +76,8 @@ def addBorders(ws, max_col):
 
 def main():
     # Read Excel file
-    career_fair_plus_info = pd.read_excel(pickFile())
+    file_path = pickFile()
+    career_fair_plus_info = pd.read_excel(file_path)
     career_fair_plus_info = career_fair_plus_info.rename(columns={"Unnamed: 1" : "Booth"})
     career_fair_plus_info = career_fair_plus_info.fillna("")
     career_fair_plus_info = career_fair_plus_info.sort_values('Employer Name').reset_index(drop=True)
@@ -131,7 +133,9 @@ def main():
     currentCol += 8
     addBorders(wallMatrix, currentCol)
     # Save Excel file
-    matrixWorkbook.save('New Matrix.xlsx')
+    save_path = os.path.join(os.path.dirname(file_path), 'New Matrix.xlsx')
+    matrixWorkbook.save(save_path)
+    print("Matrix Complete.")
 
 if __name__ == "__main__":
     main()
